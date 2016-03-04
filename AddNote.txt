@@ -1,2 +1,3 @@
 Adding some test
 diff add
+Adding new line
