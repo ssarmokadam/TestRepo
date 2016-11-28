@@ -31,12 +31,36 @@ public class TranslationSourceImpl implements TranslationSource {
   public static String SPLIT_KEY = "\\.";
 
   /**
-   * {@inheritDoc}
+   * This method reads property from various input stream such as console, file etc.
    */
-  public Map<String, Node> parseFile(InputStream in) {
+  public Map<String, Node> parseStream(InputStream in) {
 
-    // TODO Auto-generated method stub
-    return null;
+    Map<String, Node> nodeList = new HashMap<String, Node>();
+
+    BufferedReader br;
+    try {
+      br = new BufferedReader(new InputStreamReader(in));
+      String line = null;
+      while ((line = br.readLine()) != null && !line.isEmpty()) {
+
+        String[] propLine = line.split(" ");
+        for (String property : propLine) {
+          nodeList = createNodes(property, nodeList);
+        }
+      }
+
+      System.out.println("final node list " + nodeList);
+      br.close();
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    return nodeList;
+
   }
 
   /**
@@ -45,10 +69,10 @@ public class TranslationSourceImpl implements TranslationSource {
   public Map<String, Node> parseFile(File in) {
 
     Map<String, Node> nodeList = new HashMap<String, Node>();
-    FileInputStream fis;
+
     BufferedReader br;
     try {
-      fis = new FileInputStream(in);
+      FileInputStream fis = new FileInputStream(in);
       br = new BufferedReader(new InputStreamReader(fis));
       String line = null;
       while ((line = br.readLine()) != null && !line.isEmpty()) {
@@ -58,7 +82,7 @@ public class TranslationSourceImpl implements TranslationSource {
         String key = propertyArray[0];
         String value = propertyArray[1];
         if (key.contains(".")) {
-          Map<String, Node> nodeMap = createNodeMap(key, value, nodeList);
+          Map<String, Node> nodeMap = createTreeMap(key, value, nodeList);
           nodeList.putAll(nodeMap);
         } else {
           TreeNode node = new TreeNode(propertyArray[1]);
@@ -76,6 +100,31 @@ public class TranslationSourceImpl implements TranslationSource {
     }
 
     return nodeList;
+
+    // try {
+    // return parseStream(new FileInputStream(in));
+    // } catch (FileNotFoundException e) {
+    // // TODO Auto-generated catch block
+    // e.printStackTrace();
+    // }
+    // return null;
+  }
+
+  private Map<String, Node> createNodes(String property, Map<String, Node> nodeList) {
+
+    String[] propertyArray = property.split(SPLIT_PROPERTY);
+
+    String key = propertyArray[0];
+    String value = propertyArray[1];
+    if (key.contains(".")) {
+      Map<String, Node> nodeMap = createTreeMap(key, value, nodeList);
+      nodeList.putAll(nodeMap);
+    } else {
+      TreeNode node = new TreeNode(propertyArray[1]);
+      nodeList.put(propertyArray[0], node);
+    }
+    return nodeList;
+
   }
 
   /**
@@ -89,7 +138,7 @@ public class TranslationSourceImpl implements TranslationSource {
    * @param key
    * @param value
    */
-  private Map<String, Node> createNodeMap(String key, String value, Map<String, Node> nodeMap) {
+  private Map<String, Node> createTreeMap(String key, String value, Map<String, Node> nodeMap) {
 
     String[] nodeKeyList = key.split(SPLIT_KEY);
     TreeNode node, prevNode = null;

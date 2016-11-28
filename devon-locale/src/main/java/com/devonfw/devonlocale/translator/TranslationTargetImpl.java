@@ -1,6 +1,9 @@
 package com.devonfw.devonlocale.translator;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +28,7 @@ public class TranslationTargetImpl implements TranslationTarget {
    */
   public void generateStream(Map<String, Node> root, OutputStream out) {
 
-    // TODO Auto-generated method stub
+    System.out.println("Complete json String is -- " + createJsonString(root).append("}"));
 
   }
 
@@ -34,7 +37,21 @@ public class TranslationTargetImpl implements TranslationTarget {
    */
   public void generateFile(Map<String, Node> root, File out) {
 
-    System.out.println("Complete json String is -- " + createJsonString(root).append("}"));
+    try {
+      if (!out.exists()) {
+        out.createNewFile();
+      }
+      FileWriter fw = new FileWriter(out.getAbsoluteFile());
+      BufferedWriter bw = new BufferedWriter(fw);
+      bw.write(createJsonString(root).append("}").toString());
+      bw.close();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    // System.out.println("Complete json String is -- " + createJsonString(root).append("}"));
+
   }
 
   public StringBuffer createJsonString(Map<String, Node> root) {

@@ -13,7 +13,7 @@ import com.devonfw.devonlocale.common.Node;
  */
 public interface TranslationSource {
 
-  Map<String, Node> parseFile(InputStream in);
+  Map<String, Node> parseStream(InputStream in);
 
   Map<String, Node> parseFile(File in);
 }
