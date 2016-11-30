@@ -15,7 +15,7 @@ import org.apache.commons.cli.ParseException;
 import com.devonfw.devonlocale.common.Node;
 import com.devonfw.devonlocale.translator.TranslationSource;
 import com.devonfw.devonlocale.translator.TranslationSourceImpl;
-import com.devonfw.devonlocale.translator.TranslationTargetImpl;
+import com.devonfw.devonlocale.translator.TranslationTarget;
 
 /**
  * This is a main class. Here we will read property file may be from console or input file. We will first convert it to
@@ -25,9 +25,11 @@ import com.devonfw.devonlocale.translator.TranslationTargetImpl;
  */
 public class DevonLocale {
 
+  private TargetAdapterFactory factory;
+
   private TranslationSource translationSource;
 
-  private TranslationTargetImpl translationTarget;
+  private TranslationTarget translationTarget;
 
   public static final String INPUT = "input";
 
@@ -39,11 +41,13 @@ public class DevonLocale {
 
   public DevonLocale() {
     this.translationSource = new TranslationSourceImpl();
-    this.translationTarget = new TranslationTargetImpl();
+    // this.translationTarget = new JsonTargetAdapter();
+    this.factory = new TargetAdapterFactory();
   }
 
   public static void main(String[] args) {
 
+    String outputFormat;
     Map<String, Node> propertyTreeMap;
     System.out.println("Devon Locale");
     DevonLocale locale = new DevonLocale();
@@ -53,7 +57,8 @@ public class DevonLocale {
       CommandLine cmd = parser.parse(locale.getOptions(), args);
       if (cmd.hasOption(INPUT)) {
         String input = cmd.getOptionValue(INPUT);
-        String outputFormat = cmd.getOptionValue(OUTFORMAT);
+        outputFormat = cmd.getOptionValue(OUTFORMAT);
+        locale.translationTarget = locale.factory.getTranslationTarget(outputFormat);
         if (input.contains(".properties") && new File(input).exists()) {
           propertyTreeMap = locale.translationSource.parseFile(new File(input));
         } else {
@@ -92,7 +97,7 @@ public class DevonLocale {
 
     switch (outputFormat) {
 
-    case "json":
+    case "angular":
       if (cmd.hasOption(OUTPUT)) {
         String outputFile = cmd.getOptionValue(OUTPUT);
         if (!new File(outputFile).exists()) {
@@ -108,7 +113,7 @@ public class DevonLocale {
       }
       break;
 
-    case "js":
+    case "extjs":
 
     default: // Converting to json as of now
       if (cmd.hasOption(OUTPUT)) {
