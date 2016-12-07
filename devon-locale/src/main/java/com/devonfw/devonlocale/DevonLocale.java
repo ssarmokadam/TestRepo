@@ -12,6 +12,7 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.devonfw.devonlocale.common.Constant;
 import com.devonfw.devonlocale.common.Node;
 import com.devonfw.devonlocale.translator.TranslationSource;
 import com.devonfw.devonlocale.translator.TranslationSourceImpl;
@@ -31,14 +32,7 @@ public class DevonLocale {
 
   private TranslationTarget translationTarget;
 
-  public static final String INPUT = "input";
-
-  public static final String INFORMAT = "informat";
-
-  public static final String OUTPUT = "output";
-
-  public static final String OUTFORMAT = "outformat";
-
+  
   public DevonLocale() {
     this.translationSource = new TranslationSourceImpl();
     // this.translationTarget = new JsonTargetAdapter();
@@ -55,9 +49,9 @@ public class DevonLocale {
     CommandLineParser parser = new BasicParser();
     try {
       CommandLine cmd = parser.parse(locale.getOptions(), args);
-      if (cmd.hasOption(INPUT)) {
-        String input = cmd.getOptionValue(INPUT);
-        outputFormat = cmd.getOptionValue(OUTFORMAT);
+      if (cmd.hasOption(Constant.INPUT)) {
+        String input = cmd.getOptionValue(Constant.INPUT);
+        outputFormat = cmd.getOptionValue(Constant.OUTFORMAT);
         locale.translationTarget = locale.factory.getTranslationTarget(outputFormat);
         if (input.contains(".properties") && new File(input).exists()) {
           propertyTreeMap = locale.translationSource.parseFile(new File(input));
@@ -86,10 +80,10 @@ public class DevonLocale {
   private Options getOptions() {
 
     Options options = new Options();
-    options.addOption("i", INPUT, true, "File containing source translation");
-    options.addOption("f", "informat", true, "Format of the source translation. Possible values: ”java” or  “xliff” ");
-    options.addOption("o", "output", true, "File with target translation");
-    options.addOption("t", "outformat", true, "Format of the target translation Possible values: “angular” or “extjs”");
+    options.addOption("i", Constant.INPUT, true, "File containing source translation");
+    options.addOption("f", Constant.INFORMAT, true, "Format of the source translation. Possible values: java ");
+    options.addOption("o", Constant.OUTPUT, true, "File with target translation");
+    options.addOption("t", Constant.OUTFORMAT, true, "Format of the target translation Possible values: extjs or angular(converts to json as of now)");
     return options;
   }
 
@@ -97,9 +91,9 @@ public class DevonLocale {
 
     switch (outputFormat) {
 
-    case "angular":
-      if (cmd.hasOption(OUTPUT)) {
-        String outputFile = cmd.getOptionValue(OUTPUT);
+    case Constant.ANGULAR:
+      if (cmd.hasOption(Constant.OUTPUT)) {
+        String outputFile = cmd.getOptionValue(Constant.OUTPUT);
         if (!new File(outputFile).exists()) {
           File resultFile = new File(outputFile);
           this.translationTarget.generateFile(propertyTreeMap, resultFile);
@@ -113,11 +107,11 @@ public class DevonLocale {
       }
       break;
 
-    case "extjs":
+    case Constant.EXTJS:
 
-    default: // Converting to json as of now
-      if (cmd.hasOption(OUTPUT)) {
-        String outputFile = cmd.getOptionValue(OUTPUT);
+    default: 
+      if (cmd.hasOption(Constant.OUTPUT)) {
+        String outputFile = cmd.getOptionValue(Constant.OUTPUT);
         if (!new File(outputFile).exists()) {
           File resultFile = new File(outputFile);
           this.translationTarget.generateFile(propertyTreeMap, resultFile);

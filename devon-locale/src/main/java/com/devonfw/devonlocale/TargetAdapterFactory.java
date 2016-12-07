@@ -1,5 +1,6 @@
 package com.devonfw.devonlocale;
 
+import com.devonfw.devonlocale.common.Constant;
 import com.devonfw.devonlocale.translator.ExtJsTargetAdapter;
 import com.devonfw.devonlocale.translator.JsonTargetAdapter;
 import com.devonfw.devonlocale.translator.TranslationTarget;
@@ -23,10 +24,10 @@ public class TargetAdapterFactory extends AbstractTargetAdapterFactory {
 
     TranslationTarget target = null;
     switch (outputFormat) {
-    case "extjs":
+    case Constant.EXTJS:
       target = new ExtJsTargetAdapter();
       break;
-    case "angular":
+    case Constant.ANGULAR:
       target = new JsonTargetAdapter();
       break;
     default:

@@ -10,182 +10,172 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.devonfw.devonlocale.common.Constant;
 import com.devonfw.devonlocale.common.Node;
 import com.devonfw.devonlocale.common.TreeNode;
 
 /**
- * This is a class which is responsible for creating map from inputstream properties or property file.
- *
+ * This is a class which is responsible for creating map from inputstream
+ * properties or property file.
+ * 
  * @author ssarmoka
  */
 public class TranslationSourceImpl implements TranslationSource {
 
-  /**
-   *
-   */
-  public static String SPLIT_PROPERTY = "=";
+	/**
+	 * This method reads property from various input stream such as console,
+	 * file etc.
+	 */
+	public Map<String, Node> parseStream(InputStream in) {
 
-  /**
-   *
-   */
-  public static String SPLIT_KEY = "\\.";
+		Map<String, Node> nodeList = new HashMap<String, Node>();
 
-  /**
-   * This method reads property from various input stream such as console, file etc.
-   */
-  public Map<String, Node> parseStream(InputStream in) {
+		BufferedReader br;
+		try {
+			br = new BufferedReader(new InputStreamReader(in));
+			String line = null;
+			while ((line = br.readLine()) != null && !line.isEmpty()) {
 
-    Map<String, Node> nodeList = new HashMap<String, Node>();
+				String[] propLine = line.split(" ");
+				for (String property : propLine) {
+					nodeList = createNodes(property, nodeList);
+				}
+			}
 
-    BufferedReader br;
-    try {
-      br = new BufferedReader(new InputStreamReader(in));
-      String line = null;
-      while ((line = br.readLine()) != null && !line.isEmpty()) {
+			System.out.println("final node list " + nodeList);
+			br.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("ERROR:: " + e.getMessage());
+		} catch (IOException e) {
+			System.out.println("ERROR:: " + e.getMessage());
+		}
 
-        String[] propLine = line.split(" ");
-        for (String property : propLine) {
-          nodeList = createNodes(property, nodeList);
-        }
-      }
+		return nodeList;
 
-      System.out.println("final node list " + nodeList);
-      br.close();
-    } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+	}
 
-    return nodeList;
+	/**
+	 * This method loads property file and create Map from it. Blank line at end
+	 * of file will be ignored.
+	 */
+	public Map<String, Node> parseFile(File in) {
 
-  }
+		Map<String, Node> nodeList = new HashMap<String, Node>();
 
-  /**
-   * This method loads property file and create Map from it. Blank line at end of file will be ignored.
-   */
-  public Map<String, Node> parseFile(File in) {
+		BufferedReader br;
+		try {
+			FileInputStream fis = new FileInputStream(in);
+			br = new BufferedReader(new InputStreamReader(fis));
+			String line = null;
+			while ((line = br.readLine()) != null && !line.isEmpty()) {
 
-    Map<String, Node> nodeList = new HashMap<String, Node>();
+				String[] propertyArray = line.split(Constant.SPLIT_PROPERTY);
 
-    BufferedReader br;
-    try {
-      FileInputStream fis = new FileInputStream(in);
-      br = new BufferedReader(new InputStreamReader(fis));
-      String line = null;
-      while ((line = br.readLine()) != null && !line.isEmpty()) {
+				String key = propertyArray[0];
+				String value = propertyArray[1];
+				if (key.contains(".")) {
+					Map<String, Node> nodeMap = createTreeMap(key, value,
+							nodeList);
+					nodeList.putAll(nodeMap);
+				} else {
+					TreeNode node = new TreeNode(propertyArray[1]);
+					nodeList.put(propertyArray[0], node);
+				}
+			}
+			System.out.println("final node list " + nodeList);
+			br.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("ERROR:: " + e.getMessage());
 
-        String[] propertyArray = line.split(SPLIT_PROPERTY);
+		} catch (IOException e) {
+			System.out.println("ERROR:: " + e.getMessage());
+		}
 
-        String key = propertyArray[0];
-        String value = propertyArray[1];
-        if (key.contains(".")) {
-          Map<String, Node> nodeMap = createTreeMap(key, value, nodeList);
-          nodeList.putAll(nodeMap);
-        } else {
-          TreeNode node = new TreeNode(propertyArray[1]);
-          nodeList.put(propertyArray[0], node);
-        }
-      }
-      System.out.println("final node list " + nodeList);
-      br.close();
-    } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+		return nodeList;
 
-    return nodeList;
+	}
 
-    // try {
-    // return parseStream(new FileInputStream(in));
-    // } catch (FileNotFoundException e) {
-    // // TODO Auto-generated catch block
-    // e.printStackTrace();
-    // }
-    // return null;
-  }
+	private Map<String, Node> createNodes(String property,
+			Map<String, Node> nodeList) {
 
-  private Map<String, Node> createNodes(String property, Map<String, Node> nodeList) {
+		String[] propertyArray = property.split(Constant.SPLIT_PROPERTY);
 
-    String[] propertyArray = property.split(SPLIT_PROPERTY);
+		String key = propertyArray[0];
+		String value = propertyArray[1];
+		if (key.contains(".")) {
+			Map<String, Node> nodeMap = createTreeMap(key, value, nodeList);
+			nodeList.putAll(nodeMap);
+		} else {
+			TreeNode node = new TreeNode(propertyArray[1]);
+			nodeList.put(propertyArray[0], node);
+		}
+		return nodeList;
 
-    String key = propertyArray[0];
-    String value = propertyArray[1];
-    if (key.contains(".")) {
-      Map<String, Node> nodeMap = createTreeMap(key, value, nodeList);
-      nodeList.putAll(nodeMap);
-    } else {
-      TreeNode node = new TreeNode(propertyArray[1]);
-      nodeList.put(propertyArray[0], node);
-    }
-    return nodeList;
+	}
 
-  }
+	/**
+	 * This method is responsible for creating map.This method checks if
+	 * rootNode already exists in map if yes it add property to existing nodes
+	 * else it creates new node. For example: consider file containing property
+	 * a.b.c.d=e and a.b.c.g=k. In first case i.e a.b.c.d=e ,it will create all
+	 * new nodes and add rootNode that is "a" to map.In next case, it will first
+	 * search map if "a" node exists , if yes it will check for if its children
+	 * already exists, if no it will create new node and add it to node "a",
+	 * else it will append new property at appropriate level , in our example,
+	 * it will travel it node "c" and add g=k as its child.
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	private Map<String, Node> createTreeMap(String key, String value,
+			Map<String, Node> nodeMap) {
 
-  /**
-   * This method is responsible for creating map.This method checks if rootNode already exists in map if yes it add
-   * property to existing nodes else it creates new node. For example: consider file containing property a.b.c.d=e and
-   * a.b.c.g=k. In first case i.e a.b.c.d=e ,it will create all new nodes and add rootNode that is "a" to map.In next
-   * case, it will first search map if "a" node exists , if yes it will check for if its children already exists, if no
-   * it will create new node and add it to node "a", else it will append new property at appropriate level , in our
-   * example, it will travel it node "c" and add g=k as its child.
-   *
-   * @param key
-   * @param value
-   */
-  private Map<String, Node> createTreeMap(String key, String value, Map<String, Node> nodeMap) {
+		String[] nodeKeyList = key.split(Constant.SPLIT_KEY);
+		TreeNode node, prevNode = null;
+		if (!nodeMap.containsKey(nodeKeyList[0])) {
+			TreeNode leafNode = new TreeNode(value);
+			prevNode = leafNode;
+			for (int i = nodeKeyList.length - 1; i > 0; i--) {
 
-    String[] nodeKeyList = key.split(SPLIT_KEY);
-    TreeNode node, prevNode = null;
-    if (!nodeMap.containsKey(nodeKeyList[0])) {
-      TreeNode leafNode = new TreeNode(value);
-      prevNode = leafNode;
-      for (int i = nodeKeyList.length - 1; i > 0; i--) {
+				node = new TreeNode();
+				node.getChildren().put(nodeKeyList[i], prevNode);
+				prevNode = node;
+			}
+			nodeMap.put(nodeKeyList[0], prevNode);
+		} else {
+			getIfNodeexists(nodeMap, nodeKeyList, 0, key, value, null);
+		}
 
-        node = new TreeNode();
-        node.getChildren().put(nodeKeyList[i], prevNode);
-        prevNode = node;
-      }
-      nodeMap.put(nodeKeyList[0], prevNode);
-    } else {
-      getIfNodeexists(nodeMap, nodeKeyList, 0, key, value, null);
-      // System.out.println("NodeMap after adding child " + nodeMap);
-    }
+		return nodeMap;
+	}
 
-    return nodeMap;
-  }
+	private void getIfNodeexists(Map<String, Node> nodeMap,
+			String[] nodeKeyList, int level, String key, String value,
+			Node prevNode) {
 
-  private void getIfNodeexists(Map<String, Node> nodeMap, String[] nodeKeyList, int level, String key, String value,
-      Node prevNode) {
+		Node node = null;
+		if (nodeMap.containsKey(nodeKeyList[level])) {
+			for (int i = level; i < nodeKeyList.length - 1; i++) {
+				node = nodeMap.get(nodeKeyList[level]);
+				nodeMap = node.getChildren();
+				level++;
+				getIfNodeexists(nodeMap, nodeKeyList, level, key, value, node);
+			}
+		} else {
+			if (level == nodeKeyList.length - 1) {
+				TreeNode leafNode = new TreeNode(value);
+				prevNode.getChildren().put(nodeKeyList[level], leafNode);
 
-    Node node = null;
-    if (nodeMap.containsKey(nodeKeyList[level])) {
-      for (int i = level; i < nodeKeyList.length - 1; i++) {
-        node = nodeMap.get(nodeKeyList[level]);
-        nodeMap = node.getChildren();
-        level++;
-        getIfNodeexists(nodeMap, nodeKeyList, level, key, value, node);
-      }
-    } else {
-      if (level == nodeKeyList.length - 1) {
-        TreeNode leafNode = new TreeNode(value);
-        prevNode.getChildren().put(nodeKeyList[level], leafNode);
+			} else {
+				for (int i = level; i < nodeKeyList.length - 1; i++) {
+					TreeNode node1 = new TreeNode();
+					prevNode.getChildren().put(nodeKeyList[level], node1);
+				}
 
-      } else {
-        for (int i = level; i < nodeKeyList.length - 1; i++) {
-          TreeNode node1 = new TreeNode();
-          prevNode.getChildren().put(nodeKeyList[level], node1);
-        }
+			}
 
-      }
+		}
 
-    }
-
-  }
+	}
 
 }

@@ -7,13 +7,23 @@ import java.util.Map;
 import com.devonfw.devonlocale.common.Node;
 
 /**
- * TODO ssarmoka This type ...
+ * Interface representing general methods for sources.
  *
  * @author ssarmoka
  */
 public interface TranslationSource {
 
+	/**
+	 * This method reads input properties from console.
+	 * @param in
+	 * @return
+	 */
   Map<String, Node> parseStream(InputStream in);
 
+  /**
+   * This method reads input properties from java property file.
+   * @param in
+   * @return
+   */
   Map<String, Node> parseFile(File in);
 }

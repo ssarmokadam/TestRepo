@@ -3,7 +3,7 @@ package com.devonfw.devonlocale.common;
 import java.util.Map;
 
 /**
- * TODO ssarmoka This type ...
+ * General interface for listing tree node functionality.s 
  *
  * @author ssarmoka
  */

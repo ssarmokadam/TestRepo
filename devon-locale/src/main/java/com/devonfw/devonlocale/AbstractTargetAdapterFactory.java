@@ -3,7 +3,7 @@ package com.devonfw.devonlocale;
 import com.devonfw.devonlocale.translator.TranslationTarget;
 
 /**
- * TODO ssarmoka This type ...
+ * Abstract class for target adapter factory.
  *
  * @author ssarmoka
  */

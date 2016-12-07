@@ -4,56 +4,54 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO ssarmoka This type ...
- *
+ * Implementation of Node interface. Every instance of TreeNode represents node
+ * in tree.
+ * 
  * @author ssarmoka
  */
 public class TreeNode implements Node {
 
-  // String text will be null for non-leaf nodes
-  private String text = null;
+	// String text will be null for non-leaf nodes
+	private String text = null;
 
-  private Map<String, Node> childeNodeMap = new HashMap<String, Node>();
+	private Map<String, Node> childeNodeMap = new HashMap<String, Node>();
 
-  public TreeNode() {
+	public TreeNode() {
 
-  }
+	}
 
-  public TreeNode(String text) {
-    this.text = text;
-  }
+	public TreeNode(String text) {
+		this.text = text;
+	}
 
-  // public TreeNode(String key, String text) {
-  // this.key = key;
-  // this.text = text;
-  // }
+	/**
+	 * This method checks if node have any children.
+	 */
+	public boolean hasChildren() {
 
-  /**
-   * {@inheritDoc}
-   */
-  public boolean hasChildren() {
+		if (this.childeNodeMap.isEmpty())
+			return false;
+		else
+			return true;
+	}
 
-    if (this.childeNodeMap.isEmpty())
-      return false;
-    else
-      return true;
-  }
+	/**
+	 * This method will return text value of respective node. if node is leaf
+	 * node then text will have non null value. Else for other tree nodes text
+	 * will contain null.
+	 */
+	public String getText() {
 
-  /**
-   * {@inheritDoc}
-   */
-  public String getText() {
+		return this.text;
+	}
 
-    return this.text;
-  }
+	/**
+	 * This method will return map of children nodes.
+	 */
+	public Map<String, Node> getChildren() {
 
-  /**
-   * {@inheritDoc}
-   */
-  public Map<String, Node> getChildren() {
-
-    // Do I need to return null if no children exists?
-    return this.childeNodeMap;
-  }
+		// Do I need to return null if no children exists?
+		return this.childeNodeMap;
+	}
 
 }
