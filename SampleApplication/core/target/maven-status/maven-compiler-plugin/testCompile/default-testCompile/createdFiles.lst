@@ -1,0 +1,15 @@
+com\cg\SampleApplication\general\common\api\security\SecurityRestServiceImplTest.class
+com\cg\SampleApplication\general\common\base\AbstractRestServiceTest.class
+com\cg\SampleApplication\general\common\base\OaspPackageCheckTest.class
+com\cg\SampleApplication\general\common\PermissionCheckTest.class
+com\cg\SampleApplication\general\common\AbstractSpringBatchIntegrationTest.class
+com\cg\SampleApplication\general\common\SecurityTestHelper.class
+com\cg\SampleApplication\general\service\impl\config\RestaurantTestConfig.class
+com\cg\SampleApplication\general\common\PermissionCheckTest$1.class
+com\cg\SampleApplication\general\common\AccessControlSchemaXmlValidationTest.class
+com\cg\SampleApplication\general\dataaccess\impl\config\BeansJpaConfig.class
+com\cg\SampleApplication\general\common\api\security\SecurityRestServiceImplTest$StrTup.class
+com\cg\SampleApplication\general\service\impl\config\TestWebSecurityConfig.class
+com\cg\SampleApplication\general\common\DbTestHelper.class
+com\cg\SampleApplication\general\common\RestTestClientBuilder.class
+com\cg\SampleApplication\general\common\TestUtil.class
