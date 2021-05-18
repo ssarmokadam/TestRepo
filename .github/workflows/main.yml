@@ -38,7 +38,6 @@ jobs:
       - name: Triger test update event
         uses: peter-evans/repository-dispatch@v1
         with:
-          token: ${{ secrets.GHA_TOKEN }}
           repository: TesterRepo
           event-type: dispatch-update-testevent
           client-payload: '{"commitno": "${{ github.event.after }}", "repository": "TestRepo"}'
