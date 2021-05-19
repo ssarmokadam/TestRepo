@@ -22,7 +22,9 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
     - name: Build with Maven
+      with: 
+        MAVEN_OPTS: -XMX1024m
+    - name: test
       run: |
         cd SampleApplication
-        mvn clean install
       
