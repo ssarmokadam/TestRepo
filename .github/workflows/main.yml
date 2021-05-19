@@ -28,7 +28,7 @@ jobs:
       - name: Test maven config
         run: |
           set MAVEN_OPTS= -Xmx2048m -Xms2048m
-          echo %MAVEN_OPTS%
+          echo ${{MAVEN_OPTS}}
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
