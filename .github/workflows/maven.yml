@@ -21,9 +21,11 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
+        
     - name: Build with Maven
       with:
         MAVEN_OPTS: -XmX512m
+        
     - name: Build SampleApplication
       run: |
         cd SampleApplication
